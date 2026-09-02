@@ -9,10 +9,14 @@ live multi-user Azure training tenant, Reader access.
 ## Investigation
 I first checked the client's subscription, didn't notice anything out of the ordinary. Then proceeded to examine the subscription groups and tags.
 I found a subscription group that didn't follow the naming convention [testdeploy123], which lead me to the intern's storage account. Offender located.
+![offender located](operationdeaddeploy1.png)
 I also checked the tags of client's subcription to see if saw anything also out of the naming convention there as well or anything key terms like "test","intern", or "deploy".
 I found tags that labeled "unspecified" and "unkown" which lead to the same subscription group and storage account that belonged to the intern. Offender confirmed.
+![tags located](operationdeaddeploy2.png)![tags located](operationdeaddeploy3.png) ![tags located](operationdeaddeploy4.png)![account details](operationdeaddeploy5.png)
 Looked at interns deployments and time stamps to confirm. Then looked at the subscription group's [testdeploy123] policies.
+![deployment details](operationdeaddeploy6.png)
 After reviewing the policies and seeing a naming convention policy existed, I investigated further to find a error in the policy effect was set to "audit" instead of "block".
+![policy error](operationdeaddeploy7.png)
 This was how the intern was able to deploy a resource group outside the naming convention.
 
 ## What broke / what surprised me
