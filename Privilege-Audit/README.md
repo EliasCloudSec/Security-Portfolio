@@ -1,3 +1,13 @@
+[ CLASSIFIED // AUDIT BRIEFING ]
+CASE: THE PRIVILEGE AUDIT
+TENANT: Mad Hat Labs
+STATUS: FIELD AUDIT IN PROGRESS
+CLEARANCE: OPERATIVE (Reader)
+OBJECTIVE: Walk through the privilege access audit. Recover the security team's finding at each stage. Confirm the culprit.
+
+
+
+
 
 | Method               | Sees                                        | Misses                              |
 |----------------------|---------------------------------------------|-------------------------------------|
