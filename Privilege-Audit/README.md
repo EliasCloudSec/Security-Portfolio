@@ -73,6 +73,11 @@ Each method offered different visibility into the environment, demonstrating why
 
 I began by reviewing the Azure IAM role assignments and exporting them into CSV format.
 
+<img width="1480" height="597" alt="Theprivilegauditowners" src="https://github.com/user-attachments/assets/9f3dd359-1471-4beb-8efa-f1a480be2dce" />
+<sub><i>Figure 1. Azure IAM role assignment export showing repeated Owner assignments. Sensitive identifiers have been redacted..</i></sub>
+<br>
+<br>
+
 The export contained repeated Owner role assignments. This raised concerns about whether permissions were being granted more broadly or more frequently than necessary.
 
 The Owner role provides extensive control over Azure resources and can grant access to other principals. Assignments must therefore be evaluated against their business justification and effective scope.
@@ -116,6 +121,11 @@ During the review, I encountered an assignment containing an empty `principalNam
 
 This was an indicator of an unresolved security principal and prompted further investigation into whether the associated identity had been deleted.
 
+<img width="1438" height="314" alt="PrivilegeAudit2" src="https://github.com/user-attachments/assets/cf5b64c5-192e-491c-9a18-c3d7bea1e7e8" />
+<sub><i>Figure 2. Azure CLI role assignment enumeration showing an empty <b><code>principalName</code></b> property. Sensitive identifiers and assignment metadata have been redacted.</i></sub>  
+<br>
+<br>
+
 **Why This Matters:**
 
 Azure role assignments reference a principal's object identifier rather than relying on its display name.
@@ -142,9 +152,14 @@ I used Azure Resource Graph Explorer to examine role assignments across the scop
 
 This approach allowed me to query assignment records centrally rather than manually reviewing resource groups individually.
 
+![Azure Resource Graph showing 90 role assignment records](images/PrivilegeAudit4.png)
+
 The broader Resource Graph query returned **90 results** in the lab environment.
 
 This represented the returned assignment records, not 90 confirmed security vulnerabilities.
+
+
+
 
 #### KQL Query
 
@@ -172,6 +187,8 @@ Use scheduled Resource Graph queries as part of recurring access reviews. Correl
 **Audit Method:** Microsoft Entra PIM
 
 I reviewed Privileged Identity Management to understand the distinction between eligible and active privileged assignments.
+
+![PIM Eligible Assignments](images/PrivilegeAudit6.png)
 
 The PIM interface displayed two eligible Operative role assignments associated with Azure resource groups.
 
@@ -201,6 +218,8 @@ The final stage required combining the knowledge gained from the previous method
 Rather than relying on step-by-step instructions, I used authorized privilege activation and role-assignment enumeration to inspect elevated permissions.
 
 The investigation surfaced an Owner assignment at a resource-group scope.
+
+![over-provisioned account found](images/PrivilegeAudit7.png)
 
 The record also included an assignment condition that would need to be considered when evaluating the effective permissions associated with the assignment.
 
