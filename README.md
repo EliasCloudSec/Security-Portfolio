@@ -12,7 +12,7 @@ Contact: Elias94perez@hotmail.com · https://www.linkedin.com/in/elias-perez-bb1
 |---|-------|-------|----------|
 | 1 | Operation Dead Deploy | Governance forensics, deployment audit trail | [Operation Dead Deploy](./Operation-Dead-Deploy/) |
 | 2 | The Stolen Identity | App registration attack kill chain (Entra ID) | [The Stolen Identity](./The-Stolen-Identity/) |
-| 3 | Privilege Audit | RBAC and least privilege | coming, week 3 |
+| 3 | Privilege Audit | RBAC and least privilege | [Privilege Audit](./Privilege-Audit) |
 | 4 | Spin Up and Lock Down | Compute attack surface | coming, week 4 |
 | 5 | Network the Operative | Network segmentation | coming, week 5 |
 | 6 | Bucket Looting | Storage exposure hunting | coming, week 6 |
