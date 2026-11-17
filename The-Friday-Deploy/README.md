@@ -54,14 +54,13 @@ I structured the assessment around five guiding questions:
 >Close the container to stop anonymous access to the exposed file immediately, then verify that it no longer loads without authorization. Hold the release until you correct that and test the remaining deployment gaps.  
 >> Data exposure takes priority, the file is already accessible from the internet. Very bad.
 
-| Order | Finding | Why this order | Recommended timing |
-| --- | --- | --- | --- |
-| 1 | Anonymous access to internal data | A file was already readable without sign-in and accessible from the internet | Contain immediately; repeat the unauthenticated check |
-| 2 | Unrestricted public application ingress | A scheduled workload had an unnecessary public entry point | Correct promptly in the same change cycle, before promotion |
-| 3 | No managed identity attached | Workload authentication differed from the reference design | Resolve authentication and permission design before promotion |
-| 4 | Region placement differed from the baseline | Cross-region dependencies can add latency and transfer cost | Correct placement in the next deployment, before promotion |
+| Order | Finding | Why this order | Recommended timing | Class |
+| --- | --- | --- | --- | --- |
+| 1 | Anonymous access to internal data | A file was already readable without sign-in and accessible from the internet | Contain immediately; repeat the unauthenticated check | Exposure |
+| 2 | Unrestricted public application ingress | A scheduled workload had an unnecessary public entry point | Correct promptly in the same change cycle| Hygiene |
+| 3 | No managed identity attached | Workload authentication differed from the reference design | Resolve authentication and permission design | Hygiene |
+| 4 | Region placement differed from the baseline | Cross-region dependencies can add latency and transfer cost | Correct placement in the next deployment | Hygiene |
 
-update above
 
 ## Findings  
 
@@ -71,7 +70,7 @@ update above
 - **Why it matters:** Every call between this app and the rest of the platform has to travel between two locations thousands of miles apart, which adds latency to every request. It also costs money: Azure doesn't charge for data coming into a region (ingress), but it does charge for data leaving one (egress), so every response is billed.
 - **Fix:** Redeploy the app, its plan, and its storage into the platform's standard region, Central US.
 
-post photos
+
 
 ### THE WHO
 
