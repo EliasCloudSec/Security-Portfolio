@@ -70,8 +70,10 @@ I structured the assessment around five guiding questions:
 - **Why it matters:** Every call between this app and the rest of the platform has to travel between two locations thousands of miles apart, which adds latency to every request. It also costs money: Azure doesn't charge for data coming into a region (ingress), but it does charge for data leaving one (egress), so every response is billed.
 - **Fix:** Redeploy the app, its plan, and its storage into the platform's standard region, Central US.
 
-
-
+![a](thefridaydeploy1.png)
+![a](thefridaydeploy2.png)
+![a](thefridaydeploy3.png)
+> note the regions.
 
 
 ### THE WHO
