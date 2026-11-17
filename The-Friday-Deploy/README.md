@@ -54,7 +54,7 @@ I structured the assessment around five guiding questions:
 >Close the container to stop anonymous access to the exposed file immediately, then verify that it no longer loads without authorization. Hold the release until you correct that and test the remaining deployment gaps.  
 >> Data exposure takes priority, the file is already accessible from the internet. Very bad.
 
-| Order | Finding | Why this order | Recommended timing | Class |
+| Priority | Finding | Why | Recommended timing | Class |
 | --- | --- | --- | --- | --- |
 | 1 | Anonymous access to internal data | A file was already readable without sign-in and accessible from the internet | Contain immediately; repeat the unauthenticated check | Exposure |
 | 2 | Unrestricted public application ingress | A scheduled workload had an unnecessary public entry point | Correct promptly in the same change cycle| Hygiene |
