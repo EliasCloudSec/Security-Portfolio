@@ -72,5 +72,34 @@ I structured the assessment around five guiding questions:
 
 
 
+
+
 ### THE WHO
+- **What I observed:** The intern function app had no managed identity, no system assigned, or user assigned, while baseline uses a user-assigned identity.
+- **How I verified it:** I looked in the Identity blade of the intern app and checked both the System Assigned and User Assigned tabs and found no managed identity attached in either of those locations. The User Assigned tab of the baseline app had a User Assigned managed identity attached.
+- **Why it matters:** Stored credentials can leak into config files, code, log files, repos, etc. Because a stored credential never expires or rotates on its own, it keeps working until someone notices the unauthorized access. A managed identity has no secrets to leak.
+- **Fix:** Attach a user-assigned managed identity with a scoped role on the storage account, then remove the stored credential.
+
+
+
+
+### THE LEAK
+- **What I observed:** A storage container was configured for anonymous access.
+- **How I verified it:** I opened the blob (file) inside the container and copied its URL. I opened that URL in a private browser window, and the file loaded with no sign-in required.
+- **Why it matters:** This is a confirmed, public exposure. Anyone with the URL can read the data in this container. The exposed deployment notes referenced a connection string shared through an internal chat, highlighting unsafe credential handling.
+- **Fix:** Make the affected container private immediately. Disallow anonymous blob access at the storage-account level. Retest the same unsigned URL from a clean session and confirm the data is unavailable. Review available access logs and the exposed content to assess possible impact; rotate secrets only if they were actually present or otherwise exposed.
+
+
+
+
+
+### THE DOOR
+- **What I observed:** The intern app allows public access from all networks with no access restrictions, and unmatched traffic is allowed.
+- **How I verified it:** I checked Access restrictions under the Networking blade on the Main site tab of both apps. The intern app has no rules, and its catch-all allows all traffic. Production has one deny rule blocking all addresses, and its catch-all denies unmatched traffic.
+- **Why it matters:** Anyone on the internet can reach this app's endpoint, even though it only runs scheduled jobs and never needs inbound traffic.
+- **Fix:** Add a single deny rule, matching production. Once any rule exists, App Service treats unmatched traffic as an implicit deny.
+
+
+### THE CALL : RECOMMENDATIONS
+Close the public container immediately. Attach a user-assigned managed identity with a scoped role on the storage account and remove the stored credential. Redeploy into the platform's standard region. Add a single deny rule to close inbound, since one rule flips everything unmatched to implicit deny. And one worth adding yourself: a deploy checklist so the next Friday afternoon does not need a human to catch four things.
 
