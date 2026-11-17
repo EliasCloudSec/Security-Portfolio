@@ -62,6 +62,12 @@ I structured the assessment around five guiding questions:
 | 4 | Region placement differed from the baseline | Cross-region dependencies can add latency and transfer cost | Correct placement in the next deployment | Hygiene |
 
 
+### Priority Rationale
+
+I prioritized the storage exposure because I confirmed that a file was accessible without authentication. Unlike the other findings, this was a demonstrated security exposure rather than a potential risk inferred from configuration. The unrestricted network access and missing managed identity require remediation, but neither was shown to have caused unauthorized access. The region mismatch was ranked last because its primary concerns were latency, cost, and deployment consistency.
+
+
+
 ## Findings  
 
 ### THE WHERE
@@ -108,4 +114,17 @@ I structured the assessment around five guiding questions:
 
 ### THE CALL : RECOMMENDATIONS
 Close the public container immediately. Attach a user-assigned managed identity with a scoped role on the storage account and remove the stored credential. Redeploy into the platform's standard region. Add a single deny rule to close inbound, since one rule flips everything unmatched to implicit deny. And one worth adding yourself: a deploy checklist so the next Friday afternoon does not need a human to catch four things.
+
+
+## What I Learned
+
+This investigation taught me how to evaluate a new deployment without relying on a predefined security checklist. By comparing it against an existing workload, I was able to establish a reference baseline and identify configuration differences. I also learned the importance of validating suspected vulnerabilities through direct testing instead of assuming that a misconfiguration automatically means a system is compromised.
+
+Most importantly, I learned that identifying vulnerabilities is only part of a security review. Understanding which issues require immediate action and which can be addressed through scheduled remediation is just as important.
+
+## What Surprised Me
+
+What surprised me most was how easily a storage misconfiguration could expose internal data. I expected to find configuration differences, but being able to open a file in a private browser window without authentication demonstrated how serious a seemingly small setting could be.
+
+I was also surprised that an existing workload could serve as a useful reference when no formal security baseline was available.
 
