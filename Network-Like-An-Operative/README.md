@@ -318,11 +318,11 @@ No configuration changes were performed during this investigation.
 
 **Lesson 2 — Network connectivity requires multiple layers to work together.**
 
-[Explain what you learned about the relationship between DNS, NSGs, routing, and private endpoints.]
+Understanding that Azure normally creates a /32 host route for private endpoints changed how I interpret forced-egress configurations. I learned that a 0.0.0.0/0 route does not necessarily mean all outbound traffic passes through the designated firewall, since more-specific routes can take precedence. This is important when planning internal network traffic and configuring routing tables to ensure traffic follows the intended paths and security controls.  
 
 ### What Surprised Me
 
-[Describe the most unexpected aspect of the investigation and why the observed configuration challenged your initial assumptions.]
+Initially, I assumed that the 0.0.0.0/0 forced-egress route meant all outbound traffic would be directed through the virtual appliance at 10.60.100.4, including traffic to the storage account. What surprised me was learning that Azure normally creates a more-specific /32 host route for private endpoints, allowing traffic to bypass the default route. This challenged my understanding of forced-egress routing and taught me that a default route does not guarantee all outbound traffic passes through the firewall. It also reinforced the importance of examining effective routes when investigating network traffic and verifying that security controls work as intended.
 
 ---
 
