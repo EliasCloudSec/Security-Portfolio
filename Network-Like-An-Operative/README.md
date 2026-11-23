@@ -314,11 +314,12 @@ No configuration changes were performed during this investigation.
 
 **Lesson 1 — Routing depends on prefix specificity.**
 
-[Describe how your understanding of the /32 private endpoint route changed your interpretation of the /0 forced-egress UDR.]
+Understanding that Azure normally creates a /32 host route for private endpoints changed how I interpret forced-egress configurations. I learned that a 0.0.0.0/0 route does not necessarily mean all outbound traffic passes through the designated firewall, since more-specific routes can take precedence. This is important when planning internal network traffic and configuring routing tables to ensure traffic follows the intended paths and security controls.  
+
 
 **Lesson 2 — Network connectivity requires multiple layers to work together.**
 
-Understanding that Azure normally creates a /32 host route for private endpoints changed how I interpret forced-egress configurations. I learned that a 0.0.0.0/0 route does not necessarily mean all outbound traffic passes through the designated firewall, since more-specific routes can take precedence. This is important when planning internal network traffic and configuring routing tables to ensure traffic follows the intended paths and security controls.  
+I learned how DNS, NSGs, routing tables, and private endpoints work together to establish network connectivity. DNS resolves hostnames to IP addresses, NSGs control permitted traffic, and routing determines the path packets take. I also learned that each component serves a different purpose and does not necessarily require its own IP address. Understanding IP ranges, route specificity, and Azure's default configurations is essential when designing network traffic paths. This investigation showed me how default and custom configurations interact and why they must be reviewed to prevent unintended traffic behavior or security bypasses.  
 
 ### What Surprised Me
 
