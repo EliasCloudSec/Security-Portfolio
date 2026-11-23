@@ -26,7 +26,7 @@ The investigation examines five configuration layers to determine how the applic
 
 **What I checked:**
 
-I reviewed the virtual network `vnet-lab-chap5` and inspected its configured subnets to establish the source network and identify the security and routing controls associated with it.
+I reviewed the virtual network `vnet-lab-chap5` and inspected its configured subnets to figure out the source network and identify the security and routing controls that belong to it.
 
 **What I found:**
 
@@ -37,7 +37,7 @@ The VNet contains two subnets:
 | snet-workload | 10.60.1.0/24 | Application workload |
 | snet-appliance | 10.60.100.0/24 | Virtual network appliance |
 
-The `snet-workload` subnet has two associated resources:
+The `snet-workload` subnet has two resources:
 
 - Network Security Group: `nsg-lab-workload`
 - Route Table: `rt-lab-workload`
