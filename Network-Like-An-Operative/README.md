@@ -48,17 +48,19 @@ The workload subnet provides the starting point for the traffic investigation. I
 
 **Evidence:**
 
-![Azure VNet Subnet Configuration](NETWORKLIKEANOPERATIVE1.png)
+![Azure VNet Subnet Configuration](Images/NETWORKLIKEANOPERATIVE1.png)
+
 
 <sub><i>Figure 1. Azure VNet subnet configuration showing the workload and appliance subnets, their IPv4 address ranges, and the security and route table associations.</i></sub>
 
 ---
 
+
 ### Hop 2: The NSG — Evaluating Traffic Restrictions
 
 **What I checked:**
 
-I examined `nsg-lab-workload` to identify the security rules governing traffic entering and leaving the workload subnet.
+I examined `nsg-lab-workload` to identify the security controls for traffic entering and leaving the workload subnet.
 
 **What I found:**
 
@@ -69,27 +71,31 @@ The NSG contains two custom inbound rules:
 | 310 | allow-vpn-https | 203.0.113.50 | TCP 443 | Allow |
 | 4000 | deny-inbound-default | Internet | Any | Deny |
 
-The first rule permits HTTPS traffic from one specified source address.
+The first rule permits HTTPS traffic from one specified source address `203.0.113.50`.
 
-The second rule denies inbound traffic matching the `Internet` source service tag.
+The second rule denies inbound traffic originating from addresses classified under Azure's `Internet` service tag.
 
 The NSG also retains Azure's default security rules, including `AllowVnetInBound` and `AllowVnetOutBound`.
 
-There are no custom outbound security rules configured.
+There are no custom outbound security rules configured. Instead, the NSG retains three default outbound rules:
+
+- `AllowVnetOutBound` (65000): Allows traffic between addresses matching the `VirtualNetwork` service tag.
+- `AllowInternetOutBound` (65001): Allows outbound traffic to destinations matching the `Internet` service tag.
+- `DenyAllOutBound` (65500): Denies outbound traffic that does not match a higher-priority rule.
 
 **What this means:**
 
-The custom inbound rules restrict access from the specified source categories, while the default outbound rules permit matching traffic within the virtual network.
+The custom inbound rules restrict access from the Internet, while the default outbound rules permit matching traffic within the virtual network and to Internet destinations.
 
-The inbound deny rule does not represent a universal denial of every inbound source because its source is specifically the `Internet` service tag.
+The private endpoint address `10.60.1.62` falls within the workload subnet's `10.60.1.0/24` address range. Traffic to this address can match the NSG's default `AllowVnetOutBound` rule, which has a higher priority than `DenyAllOutBound`.  
 
-The workload's connection to the private endpoint can therefore be permitted by the NSG's default outbound VNet rule.
+The NSG determines whether traffic is allowed or denied, while Azure's effective routing configuration determines the packet's next hop.
 
 **Evidence:**
 
-![Azure NSG Security Rules](NETWORKLIKEANOPERATIVE2.png)
+![Azure NSG Security Rules](Images/NETWORKLIKEANOPERATIVE2.png)
 
-<sub><i>Figure 2. NSG configuration showing the custom inbound allow and deny rules, their priorities, and the absence of custom outbound rules.</i></sub>
+<sub><i>Figure 2. NSG configuration showing custom inbound rules and Azure's default inbound rules. Three default outbound rules are also configured but are not visible in this screenshot.</i></sub>
 
 ---
 
@@ -97,7 +103,7 @@ The workload's connection to the private endpoint can therefore be permitted by 
 
 **What I checked:**
 
-I reviewed `rt-lab-workload` to determine how outbound traffic from the workload subnet is routed and which device is designated as its next hop.
+I checked `rt-lab-workload` to determine how the outbound traffic from the subnet is routed and which device is designated as its next hop.
 
 **What I found:**
 
@@ -113,21 +119,22 @@ The route table contains one user-defined route:
 
 The default route forwards matching outbound destinations to a virtual appliance.
 
-However, the Azure private endpoint design introduces a more-specific host route for the private endpoint address.
+Azure normally creates a more-specific `/32` system route for private endpoints. In this case, the private endpoint's assigned address is `10.60.1.62`, corresponding to the host route `10.60.1.62/32`.
 
 **What this means:**
-
 A `0.0.0.0/0` route matches every IPv4 destination, but it is the least specific possible IPv4 prefix.
 
-Azure uses longest-prefix matching to select a route. A private endpoint `/32` host route is more specific than the `/0` default route and therefore takes precedence when both are applicable.
+Azure uses longest-prefix matching to select a route. The private endpoint's `10.60.1.62/32` system route is more specific than the `0.0.0.0/0` user-defined route (UDR) and therefore takes precedence when both are applicable.
 
-For this lab, that explains why traffic to the private endpoint can follow a direct private route instead of the default path through the virtual appliance.
+As a result, traffic destined for the private endpoint can bypass the virtual appliance at `10.60.100.4`, despite the workload subnet's forced-egress configuration.  
 
-**Important:** The screenshot confirms the configured UDR. The selected effective route was not independently verified through workload NIC effective routes or packet capture.
+**Note:** Private endpoint route-table network policies can modify this behavior.
+
+**Investigation limitation:** The route table confirms that the forced-egress UDR is configured. However, the effective route selected for traffic to `10.60.1.62` was not independently verified through effective-route diagnostics or traffic captures.  
 
 **Evidence:**
 
-![Azure Route Table Configuration](NETWORKLIKEANOPERATIVE3.png)
+![Azure Route Table Configuration](Images/NETWORKLIKEANOPERATIVE3.png)
 
 <sub><i>Figure 3. User-defined route force-egress directing default IPv4 traffic to virtual appliance 10.60.100.4, with the workload subnet association visible.</i></sub>
 
@@ -164,7 +171,7 @@ The lab scenario states that public network access is disabled. This specific se
 
 **Evidence:**
 
-![Azure Private Endpoint DNS Configuration](NETWORKLIKEANOPERATIVE4.png)
+![Azure Private Endpoint DNS Configuration](Images/NETWORKLIKEANOPERATIVE4.png)
 
 <sub><i>Figure 4. Private endpoint DNS configuration correlating the storage service FQDN with its assigned private address, 10.60.1.62.</i></sub>
 
@@ -198,7 +205,7 @@ The matching DNS record and endpoint configuration support the intended resoluti
 
 **Evidence:**
 
-![Azure Private DNS Zone Records](NETWORKLIKEANOPERATIVE5.png)
+![Azure Private DNS Zone Records](Images/NETWORKLIKEANOPERATIVE5.png)
 
 <sub><i>Figure 5. Private DNS zone A record mapping the storage account name to the private endpoint address 10.60.1.62.</i></sub>
 
